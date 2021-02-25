@@ -1,0 +1,47 @@
+# This my first nginx Dockerfile
+# Version 1.0
+
+# Base images 基础镜像
+FROM redis
+
+#MAINTAINER 维护者信息
+MAINTAINER Miracle
+
+#ENV 设置环境变量
+ENV PATH /usr/bin:$PATH
+
+#ADD  文件放在当前目录下，拷过去会自动解压
+#ADD epel-release-latest-7.noarch.rpm /usr/local/  
+
+COPY redis.conf  /etc/redis/redis.conf
+COPY lib   /usr/local/lib
+COPY lib64/libprocps.so.4.0.0 /lib64/libprocps.so.4.0.0
+COPY lib64/libtinfo.so.5.9 /lib64/libtinfo.so.5.9
+COPY bin/ps   /usr/bin/ps
+COPY bin/vi   /usr/bin/vi
+COPY bin/netstat   /usr/bin/netstat
+COPY bin/python3.6   /usr/local/bin/python3.6
+COPY bin/init /usr/bin/init
+
+#RUN 执行以下命令 
+#RUN rpm -ivh /usr/local/epel-release-latest-7.noarch.rpm
+#RUN yum install -y wget lftp gcc gcc-c++ make openssl-devel pcre-devel pcre && yum clean all
+#RUN useradd -s /sbin/nologin -M www
+RUN ln -s /lib64/libprocps.so.4.0.0 /lib64/libprocps.so.4
+RUN ln -s /lib64/libtinfo.so.5.9 /lib64/libtinfo.so.5
+RUN echo '/lib64' >> /etc/ld.so.conf.d/libc.conf
+RUN ldconfig
+
+#WORKDIR 相当于cd
+#WORKDIR /usr/local/nginx-1.8.0 
+
+#RUN ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_ssl_module --with-pcre && make && make install
+
+#RUN echo "daemon off;" >> /etc/nginx.conf
+
+#EXPOSE 映射端口
+EXPOSE 6379 6379
+
+#CMD 运行以下命令
+#CMD /usr/sbin/sshd -D
+CMD ["/usr/bin/init"]
